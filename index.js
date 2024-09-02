@@ -5,7 +5,7 @@ import { typeDefs } from "./schema.js";
 import { argsToArgsConfig } from "graphql/type/definition.js";
 
 const resolvers = {
-    Query:{
+    Query: {
         games(){
             return games
         },
@@ -29,12 +29,39 @@ const resolvers = {
         author(_, args){
             return authors.find( (author)=> author.id === args.id )
         }
+    },
+    //for nested queries
+    Game: {
+        reviews(parent){
+            return reviews.filter( (r) => r.game_id === parent.id )
+        }
+
+    },
+
+    Author: {
+        reviews(parent){
+            return reviews.filter( (r) => r.author_id === parent.id )
+        }
+    },
+    
+    Review: {
+        author(parent){
+            return authors.find( (a) => a.id === parent.author_id )
+        },
+        game(parent){
+            return games.find( (g) => g.id === parent.game_id )
+        }
     }
 }
 
 /* 
 game{
-    title
+    title,
+        nested query
+    reviews{
+        rating,
+        content
+    }
 }
 */ 
 
