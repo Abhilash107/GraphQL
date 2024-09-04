@@ -1,10 +1,10 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+
 import {games, authors, reviews} from './db.js'
 import { typeDefs } from "./schema.js";
-import { argsToArgsConfig } from "graphql/type/definition.js";
 
-const resolvers = {
+let resolvers = {
     Query: {
         games(){
             return games
@@ -50,6 +50,21 @@ const resolvers = {
         },
         game(parent){
             return games.find( (g) => g.id === parent.game_id )
+        }
+    },
+    Mutation: {
+        deleteGame(_, args){
+            const filteredGames  = games.filter( (g)=> g.id !== args.id )
+            return filteredGames
+        },
+        addGame(_, args){
+            let game = {
+                ...args.game,
+                id: Math.floor(Math.random()*1000).toString()
+            }
+
+            games.push(game)
+            return game
         }
     }
 }
